@@ -57,16 +57,20 @@ cd samurai-downloader
 python samurai-downloader.py
 ```
 O script vai baixar todos os arquivos .zip encontrados no site e salvar na mesma pasta onde o script foi executado.
-Personalizando o URL
+
+### Personalizando o Diretório de Download
+Você pode personalizar o diretório de download alterando o valor de `download_path` no código:
+```python
+download_path = '/caminho/para/o/diretorio'
+```
+
+
+
+### Personalizando o URL
 Se você precisar usar um URL diferente, modifique o valor da variável site_url no código:
 
 ```python
 site_url = 'https://class.devsamurai.com.br/'  # Substitua com a URL desejada
-```
-Personalizando o Diretório de Download
-Os arquivos serão salvos no diretório onde o script foi executado, mas você pode personalizar isso alterando o valor de download_path no código:
-```python
-download_path = '/caminho/para/o/diretorio'
 ```
 
 ### Explicação do Código
