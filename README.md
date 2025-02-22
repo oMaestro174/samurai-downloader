@@ -2,7 +2,7 @@
 
 Este projeto é um script Python que faz o download automático de arquivos `.zip` de um site. Ele usa bibliotecas como `requests`, `BeautifulSoup` e `tqdm` para buscar e baixar os arquivos, exibindo uma barra de progresso durante o processo de download.
 
-O projeto foi inspirado no site https://class.devsamurai.com.br/ que disponibilizou todo seu acervo para download. Os arquivos baixados podem estar sujeito à restrições de direitos autorais, mas seu uso para fins pessoais é totalmente gratuito.
+O projeto foi inspirado no site https://class.devsamurai.com.br/ que disponibilizou todo seu acervo para download. Os arquivos baixados podem estar sujeitos à restrições de direitos autorais, mas seu uso para fins pessoais é totalmente gratuito.
 
 ## Funcionalidades
 
