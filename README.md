@@ -25,7 +25,6 @@ Caso você ainda não tenha o Python instalado, baixe e instale a versão mais r
 python -m venv myenv
 source myenv/bin/activate  # No Linux/macOS
 myenv\Scripts\activate     # No Windows
-pip install requests beautifulsoup4
 ```
 Depois de ativar o ambiente virtual, os pacotes serão instalados nesse ambiente e não afetarão o Python global do sistema.
 
@@ -40,7 +39,7 @@ Você precisará instalar as seguintes bibliotecas Python:
 Para instalar as dependências, rode o seguinte comando:
 
 ```bash
-pip install requests beautifulsoup4 tqdm
+pip install -r requirements.txt
 ```
 
 ### Como Usar
