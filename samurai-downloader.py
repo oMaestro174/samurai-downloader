@@ -2,42 +2,67 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, unquote
-from tqdm import tqdm  # Importando a biblioteca tqdm
+from tqdm import tqdm
 
 # Defina a URL do site onde os arquivos estão
-site_url = 'https://class.devsamurai.com.br/'  # Substitua com a URL correta
+site_url = 'https://class.devsamurai.com.br/'  # Substitua pela URL correta
 
 # Defina o diretório onde os arquivos serão salvos
-download_path = os.getcwd()  # ou substitua por um diretório específico, como '/caminho/para/pasta'
+download_path = r'D:\samurai-downloader-main\cursos-samurai'
+
+# Garante que o diretório de download existe
+os.makedirs(download_path, exist_ok=True)
 
 # Faça a requisição à página
 response = requests.get(site_url)
+if response.status_code != 200:
+    print("Erro ao acessar o site.")
+    exit()
+
 soup = BeautifulSoup(response.text, 'html.parser')
 
-# Encontre todos os links de arquivos .zip na página
+# Encontre todos os links da página
 links = soup.find_all('a', href=True)
 
-# Filtre os links que terminam com '.zip'
-zip_links = [urljoin(site_url, link['href']) for link in links if link['href'].endswith('.zip')]
+# Filtrar links válidos que terminam com .zip
+zip_links = [urljoin(site_url, link['href']) for link in links if '.zip' in link['href']]
 
-# Baixe cada arquivo .zip
+if not zip_links:
+    print("Nenhum arquivo .zip encontrado.")
+    exit()
+
+# Baixar os arquivos .zip encontrados
 for link in zip_links:
-    # Extraia o nome do arquivo do link e decodifique o nome
-    file_name = unquote(link.split('/')[-1])
+    file_name = unquote(link.split('/')[-1].split('?')[0])  # Remove parâmetros da URL
     file_path = os.path.join(download_path, file_name)
-    print(f"Baixando: {file_name}")
 
-    # Baixe o arquivo com barra de progresso
-    with requests.get(link, stream=True) as r:
+    # Verifica se o arquivo já foi baixado e seu tamanho
+    existing_size = os.path.getsize(file_path) if os.path.exists(file_path) else 0
+
+    # Obtém o tamanho total do arquivo no servidor
+    head = requests.head(link)
+    total_size = int(head.headers.get('Content-Length', 0))
+
+    if existing_size >= total_size:
+        print(f"Arquivo já baixado: {file_name}")
+        continue  # Pula para o próximo arquivo
+
+    print(f"\nBaixando: {file_name}")
+
+    headers = {"Range": f"bytes={existing_size}-"} if existing_size > 0 else {}
+
+    with requests.get(link, headers=headers, stream=True) as r:
         r.raise_for_status()
 
-        # Pegue o tamanho total do arquivo (caso esteja disponível)
-        total_size = int(r.headers.get('Content-Length', 0))
-
-        # Inicialize a barra de progresso
-        with open(file_path, 'wb') as f:
-            # Use tqdm para exibir a barra de progresso
-            for chunk in tqdm(r.iter_content(chunk_size=8192), total=total_size // 8192, unit='B', unit_scale=True):
+        with open(file_path, 'ab') as f, tqdm(
+            total=total_size,
+            initial=existing_size,
+            unit='B',
+            unit_scale=True,
+            desc=file_name
+        ) as progress:
+            for chunk in r.iter_content(chunk_size=8192):
                 f.write(chunk)
+                progress.update(len(chunk))
 
-print("Download concluído!")
+print("\nDownload concluído!")
